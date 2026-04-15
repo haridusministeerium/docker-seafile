@@ -54,6 +54,9 @@ download_seafile() {
 
 source /common.sh || { echo -e "    ERROR: failed to import /common.sh"; exit 1; }
 
+[[ "$#" -gt 1 ]] && fail "max one arg (version) allowed"
+[[ -n "$1" ]] && VER="$1"
+
 # Perform sanity:
 if [[ -z "$VER" ]]; then
     fail "VER env var was not provided"
@@ -64,3 +67,4 @@ fi
 download_seafile
 
 exit 0
+

@@ -1,3 +1,10 @@
+# Deprecated
+
+As of seafile v13, binary installations are not supported and official
+Docker image is to be used.
+
+---
+
 # Seafile for Docker
 
 [Seafile](http://www.seafile.com/) is a "next-generation open source cloud storage
@@ -124,16 +131,14 @@ variable `AUTOSTART=true` is set.** A reasonable docker command would be
 
 For unraid users: this is the command that should to be converted into a Docker template.
 
-## Updates and Maintenance
+## Upgrades and Maintenance
 
 The Seafile binaries are stored in the permanent volume `/seafile`. To update the
 base system, just stop and drop the container, update the image using
 `docker pull layr/seafile` and run it again. To update Seafile, follow the normal
-upgrade process described in the [Seafile upgrade manual](https://manual.seafile.com/latest/upgrade/upgrade/)
-and/or ~[seafile gitbook](https://seafile.gitbook.io/seafile-server-manual/deploying-seafile-under-linux/upgrade-seafile-server)~
-and/or [community docs](https://seafile.readthedocs.io/en/latest)
+upgrade process described in the [Seafile upgrade manual](https://manual.seafile.com/latest/upgrade/upgrade/).
 
-General steps:
+#### General upgrade steps:
 - stop seafile server
 - if using unraid, make sure you set env var `AUTOSTART=false`, OR execute with
   command `--skip-runit`
@@ -141,9 +146,10 @@ General steps:
 - start server (w/ AUTOSTART=false or `--skip-runit`!)
 - open shell into container
 - download new seafile version using included `download-seafile` script as shown above, eg (while in container shell):
-  - $ export VER=latest  (or eg VER=7.1.5)
-  - $ download-seafile
-  - $ cd /seafile/seafile-server-7.1.5  (assuming you just downloaded v 7.1.5)
+  - `$ export VER=latest`  (or eg VER=7.1.5)
+    - alternatively pass version to the script, e.g. `download-seafile 7.1.5`
+  - `$ download-seafile [version]`
+  - `$ cd /seafile/seafile-server-7.1.5`  (assuming you just downloaded v 7.1.5)
 - run migration scripts/update configs as per [upgrade manual](https://manual.seafile.com/latest/upgrade/upgrade/)
   - remember, even patch version upgrade will require migration (likely via
     `minor-upgrade.sh` script)!
