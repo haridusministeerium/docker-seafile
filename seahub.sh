@@ -6,6 +6,8 @@ readonly PROCESS_NAME='seahub.wsgi:application'
 readonly SEAHUB_BIN=/seafile/seafile-server-latest/seahub.sh
 
 # TODO: should we kill via pid-files instead?
+#
+# shellcheck disable=SC2329
 stop_server() {
     printf -- "--> stopping seahub at [%s]:" "$(date)" >> "$LOG"
     "$SEAHUB_BIN" stop >> "$LOG" 2>&1
@@ -40,9 +42,7 @@ sleep 5
 
 # Script should not exit unless seahub died
 #while pgrep -f "$PROCESS_NAME" >/dev/null 2>&1; do
-while true; do
-    sleep 60 &
-    wait $!
-done
+sleep infinity &  # No, sleeping in the foreground does not work
+wait $!
 
 exit 0

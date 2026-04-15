@@ -50,7 +50,7 @@ else
     err "[$webdav_tmp_dir] not a dir"
 fi
 
-# ...then execute GC; see https://github.com/laur89/docker-seafile?tab=readme-ov-file#gc
+# ...then execute GC; see https://github.com/haridusministeerium/docker-seafile#gc
 "$GC_BIN"  --dry-run || fail "[$GC_BIN --dry-run] failed w/ $?"
 "$GC_BIN"            || fail "[$GC_BIN] failed w/ $?"
 sleep 1

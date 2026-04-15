@@ -9,17 +9,13 @@ LOG_ROOT='/seafile/logs'
 #
 # @returns {bool}  true, if provided url was a valid url.
 is_valid_url() {
-    local regex
-
-    readonly regex='^(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]'
-
+    local regex='^(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]'
     [[ "$1" =~ $regex ]]
 }
 
 
 check_is_file() {
-    local file
-    readonly file="$1"
+    local file="$1"
     [[ -f "$file" ]] || fail "${FUNCNAME[1]}: [$file] is not a valid file"
 }
 
@@ -53,9 +49,7 @@ wait_for_db() {
     local host port messaged
 
     __parse_db_connection_details() {
-        local config
-
-        readonly config='/seafile/conf/seafile.conf'
+        local config='/seafile/conf/seafile.conf'
 
         check_is_file "$config"
         host="$(crudini --get "$config" database host)" || fail "fetching db host from config file [$config] failed"
@@ -70,7 +64,6 @@ wait_for_db() {
     done
 
     echo "Connection to db @ [$host:$port] established"
-
     return 0
 }
 

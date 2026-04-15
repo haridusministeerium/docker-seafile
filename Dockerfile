@@ -1,57 +1,51 @@
-FROM phusion/baseimage:jammy-1.0.4
+FROM phusion/baseimage:noble
 #########################
-# see https://github.com/haiwen/seafile-docker/blob/master/image/seafile_10.0/Dockerfile for 
+# see https://github.com/haiwen/seafile-docker/blob/master/image/seafile_12.0/Dockerfile for 
 # official Dockerfile image (note it still contains nginx as of writing!);
 # for additional clarity, also refer to the installation script @ https://github.com/haiwen/seafile-server-installer/blob/master/seafile-7.1_ubuntu
+#
+# NOTE:
+# - we install python3-dev build-essential ourselves as otherwise pip-installed
+#   packages fail to install
+# - we remove the python3-jwt system package, as otherwise pyjwt pip pkg fails to install
 #########################
-
-MAINTAINER    Laur
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8
 
-## Give children processes x sec timeout on exit:
+## Give children processes x sec timeout on exit: (note this is phusion-specific)
 #ENV KILL_PROCESS_TIMEOUT=30
 ## Give all other processes (such as those which have been forked) x sec timeout on exit:
 #ENV KILL_ALL_PROCESSES_TIMEOUT=30
 
 # Seafile dependencies and system configuration
-# - note ffmpeg && moviepy are for video thumbnails (https://github.com/haiwen/seafile-docs/blob/master/deploy/video_thumbnails.md)
 RUN apt-get -y update --fix-missing && \
+    apt-get -y upgrade && \
+    apt-get -y remove --purge python3-jwt && \
     apt-get install --no-install-recommends -y \
-        python3 \
-        python3-pip \
-        python3-setuptools \
-        libmysqlclient-dev \
-        libmemcached11 \
-        libmemcached-dev \
-        libffi-dev \
-        wget \
-        netcat \
-        crudini \
-        ffmpeg \
-        vim \
-        htop \
+        vim htop net-tools psmisc wget curl git unzip \
         tzdata \
-        ca-certificates \
-        ldap-utils \
-        libldap-2.5-0 \
-        libldap2-dev \
-        python3-ldap3 \
-        build-essential \
-        python3-dev \
-        dnsutils \
-        net-tools \
-        unattended-upgrades && \
-    rm -f /usr/bin/python && ln -s /usr/bin/python3 /usr/bin/python && \
-    python3 -m pip install --upgrade pip && rm -r /root/.cache/pip && \
+        libmysqlclient-dev \
+        libmemcached11 libmemcached-dev \
+        fuse poppler-utils \
+        ldap-utils libldap2-dev ca-certificates dnsutils pkg-config \
+        netcat-traditional \
+        crudini \
+        unattended-upgrades \
+        python3 python3-pip python3-setuptools python3-ldap3 \
+        python3-dev build-essential && \
 
-# install pylibmc and friends..:
-    pip3 install --timeout=3600 \
-        click termcolor colorlog pymysql django==4.2.* \
-        future==0.18.* mysqlclient==2.1.* Pillow==10.2.* pylibmc captcha==0.5.* markupsafe==2.0.1 jinja2 \
-        sqlalchemy==2.0.18 django-pylibmc django_simple_captcha==0.6.* pyjwt==2.6.* djangosaml2==1.5.* pysaml2==7.2.* pycryptodome==3.16.* cffi==1.15.1 \
-        python-ldap==3.4.3 psd-tools lxml moviepy && \
+    rm /usr/lib/python3.12/EXTERNALLY-MANAGED && \
+    rm -f /usr/bin/python && ln -s /usr/bin/python3 /usr/bin/python && \
+    pip3 install --no-cache-dir --ignore-installed -U setuptools cryptography && \
+    rm -rf /usr/lib/python3/dist-packages/setuptools* && rm -rf /usr/lib/python3/dist-packages/cryptography* && \
+
+    pip3 install --no-cache-dir --timeout=3600 \
+        click termcolor colorlog pytz \
+        sqlalchemy==2.0.* gevent==24.2.* pymysql==1.1.* jinja2 markupsafe==2.0.1 django-pylibmc pylibmc psd-tools lxml \
+        django==4.2.* cffi==1.17.0 future==1.0.* mysqlclient==2.2.* captcha==0.6.* django_simple_captcha==0.6.* \
+        pyjwt==2.9.* djangosaml2==1.9.* pysaml2==7.3.* pycryptodome==3.20.* python-ldap==3.4.* pillow==10.4.* pillow-heif==0.18.* && \
+
     ulimit -n 30000 && \
     update-locale LANG=C.UTF-8 && \
 # prep dirs for seafile services' daemons:

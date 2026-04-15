@@ -13,8 +13,8 @@ SEAFILE_URL="https://$SERVER_IP"      # note https (assuming you've enabled http
 setup_seafile() {
     local init_admin init_admin_bak
 
-    readonly init_admin="${SEAFILE_PATH}/check_init_admin.py"
-    readonly init_admin_bak="${init_admin}.bak"
+    init_admin="${SEAFILE_PATH}/check_init_admin.py"
+    init_admin_bak="${init_admin}.bak"
 
     check_is_file "$init_admin"
     # Backup check_init_admin.py befor applying changes
@@ -43,9 +43,7 @@ setup_seafile() {
 
 # https://manual.seafile.com/extension/webdav/
 setup_webdav() {
-    local f
-
-    readonly f='./conf/seafdav.conf'
+    local f='./conf/seafdav.conf'
 
     check_is_file "$f"
     crudini --merge "$f" <<'EOF'
@@ -64,9 +62,7 @@ EOF
 # additional conf from:
 #   https://manual.seafile.com/deploy/https_with_nginx/#modifying-seahub_settingspy
 setup_seahub_settings_for_nginx() {
-    local f
-
-    readonly f='./conf/seahub_settings.py'
+    local f='./conf/seahub_settings.py'
 
     check_is_file "$f"
 

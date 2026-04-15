@@ -6,6 +6,8 @@ readonly SEAFILE_BIN=/seafile/seafile-server-latest/seafile.sh
 readonly WEBDAV_PROCESS_NAME='wsgidav.server.server_cli'
 
 # TODO: should we kill via pid-files instead? pids located @ /seafile/pids/
+#
+# shellcheck disable=SC2329
 stop_server() {
     #sleep 2  # give chance for seahub to stop first
 
@@ -51,9 +53,7 @@ sleep 5
 
 # Script should not exit unless seafile died
 #while pgrep -f "seafile-controller" >/dev/null 2>&1; do
-while true; do
-    sleep 60 &
-    wait $!
-done
+sleep infinity &  # No, sleeping in the foreground does not work
+wait $!
 
 exit 0
